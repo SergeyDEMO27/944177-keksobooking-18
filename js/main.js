@@ -12,9 +12,9 @@ var featuresArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'con
 var photosArray = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var requiredObjects = 8;
 
-var getRandom = function (min, max) {
-  return max ? (Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min)) : (min[Math.floor(Math.random() * min.length)]);
-};
+function getRandom(firstNumber, secondNumber) {
+  return (Math.floor(Math.random() * (Math.floor(secondNumber) - Math.ceil(firstNumber))) + Math.ceil(firstNumber));
+}
 
 var getObjects = function (objectCount) {
   var objects = [];
@@ -25,17 +25,17 @@ var getObjects = function (objectCount) {
       },
 
       'offer': {
-        'title': getRandom(titlesArray),
+        'title': titlesArray[getRandom(0, titlesArray.length)],
         'address': getRandom(0, 1000) + ', ' + getRandom(0, 1000),
         'price': getRandom(3000, 10000),
-        'type': getRandom(typesArray),
+        'type': typesArray[getRandom(0, typesArray.length)],
         'rooms': getRandom(1, 5),
         'guests': getRandom(1, 10),
-        'checkin': getRandom(timesArray),
-        'checkout': getRandom(timesArray),
-        'features': getRandom(featuresArray),
-        'description': getRandom(descriptionArray),
-        'photos': getRandom(photosArray)
+        'checkin': timesArray[getRandom(0, timesArray.length)],
+        'checkout': timesArray[getRandom(0, timesArray.length)],
+        'features': featuresArray[getRandom(0, featuresArray.length)],
+        'description': descriptionArray[getRandom(0, descriptionArray.length)],
+        'photos': photosArray[getRandom(0, photosArray.length)]
       },
 
       'location': {
@@ -51,9 +51,10 @@ var objects = getObjects(requiredObjects);
 
 var renderPins = function (pin) {
   var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.setAttribute('style', 'left:' + (pin.location.x - 20) + 'px' + ';top:' + (pin.location.y - 20) + 'px');
-  pinElement.querySelector('img').setAttribute('alt', pin.offer.title);
-  pinElement.querySelector('img').setAttribute('src', pin.author.avatar);
+  pinElement.style.left = (pin.location.x - 20) + 'px';
+  pinElement.style.top = (pin.location.y - 40) + 'px';
+  pinElement.querySelector('img').alt = pin.offer.title;
+  pinElement.querySelector('img').src = pin.author.avatar;
   return pinElement;
 };
 
