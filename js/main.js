@@ -23,6 +23,12 @@ var descriptionArray = ['Ужасное жилье, но лучшее, что т
 var featuresArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photosArray = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var requiredObjects = 8;
+var roomsValues = {
+  1: [2],
+  2: [1, 2],
+  3: [0, 1, 2],
+  100: [3]
+};
 
 address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAIN_PIN_HEIGHT_DISABLED / 2);
 
@@ -63,21 +69,6 @@ var getObjects = function (objectCount) {
 };
 var objects = getObjects(requiredObjects);
 
-var renderPins = function (pin) {
-  var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.style.left = (pin.location.x - 20) + 'px';
-  pinElement.style.top = (pin.location.y - 40) + 'px';
-  pinElement.querySelector('img').alt = pin.offer.title;
-  pinElement.querySelector('img').src = pin.author.avatar;
-  return pinElement;
-};
-
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < objects.length; i++) {
-  fragment.appendChild(renderPins(objects[i]));
-}
-pinsMap.appendChild(fragment);
-
 var getField = function (field) {
   for (var j = 0; j < field.length; j++) {
     field[j].setAttribute('disabled', 'disabled');
@@ -100,6 +91,21 @@ var openMap = function () {
 
 mainPin.addEventListener('mousedown', function () {
   openMap();
+
+  var renderPins = function (pin) {
+    var pinElement = similarPinTemplate.cloneNode(true);
+    pinElement.style.left = (pin.location.x - 20) + 'px';
+    pinElement.style.top = (pin.location.y - 40) + 'px';
+    pinElement.querySelector('img').alt = pin.offer.title;
+    pinElement.querySelector('img').src = pin.author.avatar;
+    return pinElement;
+  };
+
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < objects.length; i++) {
+    fragment.appendChild(renderPins(objects[i]));
+  }
+  pinsMap.appendChild(fragment);
 });
 
 mainPin.addEventListener('keydown', function (evt) {
@@ -109,25 +115,14 @@ mainPin.addEventListener('keydown', function (evt) {
 });
 
 rooms.addEventListener('change', function () {
-  if (rooms.value === '1') {
-    guestsOptions[0].setAttribute('disabled', 'disabled');
-    guestsOptions[1].setAttribute('disabled', 'disabled');
-    guestsOptions[2].removeAttribute('disabled', 'disabled');
-    guestsOptions[3].setAttribute('disabled', 'disabled');
-  } else if (rooms.value === '2') {
-    guestsOptions[0].setAttribute('disabled', 'disabled');
-    guestsOptions[1].removeAttribute('disabled', 'disabled');
-    guestsOptions[2].removeAttribute('disabled', 'disabled');
-    guestsOptions[3].setAttribute('disabled', 'disabled');
-  } else if (rooms.value === '3') {
-    guestsOptions[0].removeAttribute('disabled', 'disabled');
-    guestsOptions[1].removeAttribute('disabled', 'disabled');
-    guestsOptions[2].removeAttribute('disabled', 'disabled');
-    guestsOptions[3].setAttribute('disabled', 'disabled');
-  } else if (rooms.value === '100') {
-    guestsOptions[0].setAttribute('disabled', 'disabled');
-    guestsOptions[1].setAttribute('disabled', 'disabled');
-    guestsOptions[2].setAttribute('disabled', 'disabled');
-    guestsOptions[3].removeAttribute('disabled', 'disabled');
+  guestsOptions.forEach(function (element) {
+    element.setAttribute('disabled', 'disabled');
+  });
+  for (var i = 0; i < rooms.length; i++) {
+    if (Object.keys(roomsValues)[i] === rooms.value) {
+      Object.values(roomsValues)[i].forEach(function (element) {
+        guestsOptions[element].removeAttribute('disabled', 'disabled');
+      });
+    }
   }
 });
