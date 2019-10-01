@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "eslint": "6.3.0",
+    "eslint-auto-fix": "^1.0.0",
     "eslint-config-htmlacademy": "0.5.2"
   },
   "license": "MIT",

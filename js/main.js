@@ -1,9 +1,21 @@
 'use strict';
 var townMap = document.querySelector('.map');
-townMap.classList.remove('map--faded');
 var pinsMap = document.querySelector('.map__pins');
+var mainPin = document.querySelector('.map__pin--main');
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
+var adForm = document.querySelector('.ad-form');
+var mapForm = document.querySelector('.map__filters');
+var adFields = adForm.querySelectorAll('fieldset');
+var address = adForm.querySelector('#address');
+var rooms = document.querySelector('#room_number');
+var guests = document.querySelector('#capacity');
+var guestsOptions = guests.querySelectorAll('option');
 
+var ENTER_KEYCODE = 13;
+var MAIN_PIN_WIDTH_DISABLED = 156;
+var MAIN_PIN_HEIGHT_DISABLED = 156;
+var MAIN_PIN_HEIGHT_ENABLED = 44;
+var MAIN_PIN_HEIGHT = 22;
 var typesArray = ['palace', 'flat', 'house', 'bungalo'];
 var timesArray = ['12:00', '13:00', '14:00'];
 var titlesArray = ['Уютное гнездышко для пенсионеров', 'Тайное убежище для неверных', 'Приют для лысеющих холостяков', 'Каюта для пирата', 'Шалаш для влюбленных'];
@@ -11,6 +23,14 @@ var descriptionArray = ['Ужасное жилье, но лучшее, что т
 var featuresArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photosArray = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var requiredObjects = 8;
+var roomsValues = {
+  1: [2],
+  2: [1, 2],
+  3: [0, 1, 2],
+  100: [3]
+};
+
+address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAIN_PIN_HEIGHT_DISABLED / 2);
 
 function getRandom(firstNumber, secondNumber) {
   return (Math.floor(Math.random() * (Math.floor(secondNumber) - Math.ceil(firstNumber))) + Math.ceil(firstNumber));
@@ -49,17 +69,60 @@ var getObjects = function (objectCount) {
 };
 var objects = getObjects(requiredObjects);
 
-var renderPins = function (pin) {
-  var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.style.left = (pin.location.x - 20) + 'px';
-  pinElement.style.top = (pin.location.y - 40) + 'px';
-  pinElement.querySelector('img').alt = pin.offer.title;
-  pinElement.querySelector('img').src = pin.author.avatar;
-  return pinElement;
+var getField = function (field) {
+  for (var j = 0; j < field.length; j++) {
+    field[j].setAttribute('disabled', 'disabled');
+  }
+};
+getField(adFields);
+getField(mapForm.children);
+
+var openMap = function () {
+  for (var j = 0; j < adFields.length; j++) {
+    adFields[j].removeAttribute('disabled', 'disabled');
+  }
+  for (var l = 0; l < mapForm.children.length; l++) {
+    mapForm.children[l].removeAttribute('disabled', 'disabled');
+  }
+  townMap.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
 };
 
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < objects.length; i++) {
-  fragment.appendChild(renderPins(objects[i]));
-}
-pinsMap.appendChild(fragment);
+mainPin.addEventListener('mousedown', function () {
+  openMap();
+
+  var renderPins = function (pin) {
+    var pinElement = similarPinTemplate.cloneNode(true);
+    pinElement.style.left = (pin.location.x - 20) + 'px';
+    pinElement.style.top = (pin.location.y - 40) + 'px';
+    pinElement.querySelector('img').alt = pin.offer.title;
+    pinElement.querySelector('img').src = pin.author.avatar;
+    return pinElement;
+  };
+
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < objects.length; i++) {
+    fragment.appendChild(renderPins(objects[i]));
+  }
+  pinsMap.appendChild(fragment);
+});
+
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openMap();
+  }
+});
+
+rooms.addEventListener('change', function () {
+  guestsOptions.forEach(function (element) {
+    element.setAttribute('disabled', 'disabled');
+  });
+  for (var i = 0; i < rooms.length; i++) {
+    if (Object.keys(roomsValues)[i] === rooms.value) {
+      Object.values(roomsValues)[i].forEach(function (element) {
+        guestsOptions[element].removeAttribute('disabled', 'disabled');
+      });
+    }
+  }
+});
