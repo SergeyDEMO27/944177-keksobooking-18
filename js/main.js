@@ -3,7 +3,9 @@ var townMap = document.querySelector('.map');
 var pinsMap = document.querySelector('.map__pins');
 var mainPin = document.querySelector('.map__pin--main');
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
+var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var adForm = document.querySelector('.ad-form');
+var mapFilters = document.querySelector('.map__filters-container');
 var mapForm = document.querySelector('.map__filters');
 var adFields = adForm.querySelectorAll('fieldset');
 var address = adForm.querySelector('#address');
@@ -36,6 +38,25 @@ function getRandom(firstNumber, secondNumber) {
   return (Math.floor(Math.random() * (Math.floor(secondNumber) - Math.ceil(firstNumber))) + Math.ceil(firstNumber));
 }
 
+var getType = function (types) {
+  var type;
+  switch (types) {
+    case ('flat'):
+      type = 'Квартира';
+      break;
+    case ('bungalo'):
+      type = 'Бунгало';
+      break;
+    case ('house'):
+      type = 'Дом';
+      break;
+    case ('palace'):
+      type = 'Дворец';
+      break;
+  }
+  return type;
+};
+
 var getObjects = function (objectCount) {
   var objects = [];
   for (var i = 0; i < objectCount; i++) {
@@ -48,7 +69,7 @@ var getObjects = function (objectCount) {
         'title': titlesArray[getRandom(0, titlesArray.length)],
         'address': getRandom(0, 1000) + ', ' + getRandom(0, 1000),
         'price': getRandom(3000, 10000),
-        'type': typesArray[getRandom(0, typesArray.length)],
+        'type': getType(typesArray[getRandom(0, typesArray.length)]),
         'rooms': getRandom(1, 5),
         'guests': getRandom(1, 10),
         'checkin': timesArray[getRandom(0, timesArray.length)],
@@ -101,11 +122,28 @@ mainPin.addEventListener('mousedown', function () {
     return pinElement;
   };
 
+  var renderCards = function (card) {
+    var cardElement = similarCardTemplate.cloneNode(true);
+    cardElement.querySelector('.popup__title').textContent = card.offer.title;
+    cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
+    cardElement.querySelector('.popup__text--price').textContent = card.offer.price;
+    cardElement.querySelector('.popup__type').textContent = card.offer.type;
+    cardElement.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
+    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
+    cardElement.querySelector('.popup__features').textContent = card.offer.features;
+    cardElement.querySelector('.popup__description').textContent = card.offer.description;
+    cardElement.querySelector('.popup__photos').querySelector('img').src = card.offer.photos;
+    cardElement.querySelector('.popup__avatar').src = card.author.avatar;
+    return cardElement;
+  };
+
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < objects.length; i++) {
     fragment.appendChild(renderPins(objects[i]));
   }
+  fragment.appendChild(renderCards(objects[0]));
   pinsMap.appendChild(fragment);
+  pinsMap.parentNode.insertBefore(fragment, mapFilters);
 });
 
 mainPin.addEventListener('keydown', function (evt) {
