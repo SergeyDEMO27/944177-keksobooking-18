@@ -39,7 +39,8 @@
   mainPin.addEventListener('mousedown', function () {
     openMap();
 
-    pinsMap.appendChild(window.render.fragment);
+    pinsMap.appendChild(window.renderPin.fragmentPin);
+    pinsMap.appendChild(window.renderCard.fragmentCard);
   });
 
   mainPin.addEventListener('keydown', function (evt) {
