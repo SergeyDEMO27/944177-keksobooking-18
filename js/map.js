@@ -36,11 +36,64 @@
     address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
   };
 
-  mainPin.addEventListener('mousedown', function () {
+  mainPin.addEventListener('mousedown', function (evt) {
     openMap();
 
     pinsMap.appendChild(window.renderPin.fragmentPin);
     pinsMap.appendChild(window.renderCard.fragmentCard);
+
+    evt.preventDefault();
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var dragged = false;
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      dragged = true;
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      mainPin.style.top = mainPin.offsetTop - shift.y + 'px';
+
+      if (parseInt(mainPin.style.top, 10) > 630) {
+        mainPin.style.top = 630 + 'px';
+      } else if (parseInt(mainPin.style.top, 10) < 130) {
+        mainPin.style.top = 130 + 'px';
+      }
+      mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
+      if (parseInt(mainPin.style.left, 10) > 1136) {
+        mainPin.style.left = 1136 + 'px';
+      } else if (parseInt(mainPin.style.left, 10) < 0) {
+        mainPin.style.left = 0 + 'px';
+      }
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      if (dragged) {
+        var onClickPreventDefault = function (mEvt) {
+          mEvt.preventDefault();
+          mainPin.removeEventListener('click', onClickPreventDefault);
+        };
+        mainPin.addEventListener('click', onClickPreventDefault);
+        address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 
   mainPin.addEventListener('keydown', function (evt) {
