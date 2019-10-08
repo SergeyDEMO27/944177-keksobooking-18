@@ -62,7 +62,7 @@
         },
 
         'location': {
-          'x': getRandom(0, 1200),
+          'x': getRandom(0, 1135),
           'y': getRandom(130, 630)
         }
       };
