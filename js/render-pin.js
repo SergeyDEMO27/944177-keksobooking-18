@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
   var renderPins = function (pin) {
     var pinElement = similarPinTemplate.cloneNode(true);
@@ -11,12 +12,20 @@
     return pinElement;
   };
 
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < window.testData.testObjects.length; i++) {
-    fragment.appendChild(renderPins(window.testData.testObjects[i]));
-  }
+  var successHandler = function (pins) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < pins.length; i++) {
+      fragment.appendChild(renderPins(pins[i]));
+    }
 
-  window.renderPin = {
-    fragmentPin: fragment
+    window.renderPin = {
+      fragmentPin: fragment
+    };
+};
+
+  var errorHandler = function (errorMessage) {
+    document.body.main.appendChild(errorTemplate);
   };
+
+  window.backendLoad(successHandler, errorHandler);
 })();
