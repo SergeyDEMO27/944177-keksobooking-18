@@ -21,9 +21,9 @@
     window.renderPin = {
       fragmentPin: fragment
     };
-};
+  };
 
-  var errorHandler = function (errorMessage) {
+  var errorHandler = function () {
     document.body.main.appendChild(errorTemplate);
   };
 
