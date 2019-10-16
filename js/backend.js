@@ -1,7 +1,7 @@
 'use strict';
 (function () {
 
-  window.backendLoad = function (onLoad, onError) {
+  window.load = function (onLoad, onError) {
     var URL = 'https://js.dump.academy/keksobooking/data';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';

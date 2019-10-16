@@ -27,5 +27,7 @@
     document.body.main.appendChild(errorTemplate);
   };
 
-  window.backendLoad(successHandler, errorHandler);
+  window.renderApp = function () {
+    window.load(successHandler, errorHandler);
+  };
 })();

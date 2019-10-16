@@ -37,6 +37,7 @@
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
+    window.renderApp();
     openMap();
 
     pinsMap.appendChild(window.renderPin.fragmentPin);
