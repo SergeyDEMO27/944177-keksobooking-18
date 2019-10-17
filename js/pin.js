@@ -1,8 +1,9 @@
 'use strict';
 (function () {
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
+  // var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
-  var renderPins = function (pin) {
+  var createPin = function (pin) {
     var pinElement = similarPinTemplate.cloneNode(true);
     pinElement.style.left = (pin.location.x - 20) + 'px';
     pinElement.style.top = (pin.location.y - 40) + 'px';
@@ -11,12 +12,13 @@
     return pinElement;
   };
 
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < window.testData.testObjects.length; i++) {
-    fragment.appendChild(renderPins(window.testData.testObjects[i]));
-  }
+  var renderPins = function (data, container) {
+    data.forEach(function (it) {
+      container.appendChild(createPin(it));
+    });
+  };
 
-  window.renderPin = {
-    fragmentPin: fragment
+  window.pin = {
+    renderPins: renderPins
   };
 })();

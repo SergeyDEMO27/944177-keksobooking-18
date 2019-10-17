@@ -1,14 +1,12 @@
 'use strict';
 (function () {
   var townMap = document.querySelector('.map');
-  var pinsMap = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var mapForm = document.querySelector('.map__filters');
   var adFields = adForm.querySelectorAll('fieldset');
   var address = adForm.querySelector('#address');
 
-  var ENTER_KEYCODE = 13;
   var MAIN_PIN_WIDTH_DISABLED = 156;
   var MAIN_PIN_HEIGHT_DISABLED = 156;
   var MAIN_PIN_HEIGHT_ENABLED = 44;
@@ -37,10 +35,11 @@
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
-    openMap();
+    // window.renderApp();
+    // openMap();
 
-    pinsMap.appendChild(window.renderPin.fragmentPin);
-    pinsMap.appendChild(window.renderCard.fragmentCard);
+    // pinsMap.appendChild(window.renderPin.fragmentPin);
+    // pinsMap.appendChild(window.renderCard.fragmentCard);
 
     evt.preventDefault();
     var startCoords = {
@@ -96,9 +95,15 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  mainPin.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openMap();
-    }
-  });
+  var onSuccesHandler = function (data) {
+    window.pin.renderPins(data, townMap);
+  };
+
+  var startApp = function () {
+    openMap();
+    window.load(onSuccesHandler);
+    mainPin.removeEventListener('click', startApp);
+  };
+
+  mainPin.addEventListener('click', startApp);
 })();
