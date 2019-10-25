@@ -37,7 +37,7 @@
 
       <!-- Фильтрация объявлений -->
       <div class="map__filters-container">
-        <form action="#" class="map__filters" autocomplete="off">
+        <form action="#" class="map__filters" enctype="multipart/form-data" method="post" autocomplete="off">
           <select name="housing-type" id="housing-type" class="map__filter">
             <option value="any" selected>Любой тип жилья</option>
             <option value="palace">Дворец</option>
@@ -100,11 +100,11 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио">
+          <input id="title" name="title" type="text" minlength="30" maxlength="100" placeholder="Милая, уютная квартирка в центре Токио" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес</label>
-          <input id="address" name="address" type="text">
+          <input id="address" name="address" type="text" readonly>
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
@@ -117,7 +117,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" placeholder="5000">
+          <input id="price" name="price" type="number" max="1000000" placeholder="5000" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
           <label class="ad-form__label" for="timein">Время заезда и выезда</label>
@@ -204,7 +204,7 @@
 
   <!-- Модальное окно с информацией об объявлении -->
   <template id="card">
-    <article class="map__card popup">
+    <article class="map__card popup" tabindex="0">
       <img src="img/avatars/user01.png" class="popup__avatar" width="70" height="70" alt="Аватар пользователя">
       <button type="button" class="popup__close">Закрыть</button>
       <h3 class="popup__title">Уютное гнездышко для молодоженов</h3>
@@ -230,7 +230,7 @@
 
   <!-- Метка объявления -->
   <template id="pin">
-    <button type="button" class="map__pin" style="left: 200px; top: 400px;"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
+    <button type="button" class="map__pin" style="left: 200px; top: 400px;" tabindex="0"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
   </template>
 
   <!-- Сообщение об успешном создании объявления -->
@@ -250,7 +250,7 @@
   <script src="js/backend.js"></script>
   <script src="js/test-data.js"></script>
   <script src="js/pin.js"></script>
-  <script src="js/render-card.js"></script>
+  <script src="js/card.js"></script>
   <script src="js/map.js"></script>
   <script src="js/validation.js"></script>
 </body>

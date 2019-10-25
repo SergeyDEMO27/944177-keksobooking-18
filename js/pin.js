@@ -1,7 +1,8 @@
+
 'use strict';
 (function () {
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
-  // var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  // var townMap = document.querySelector('.map');
 
   var createPin = function (pin) {
     var pinElement = similarPinTemplate.cloneNode(true);
@@ -18,7 +19,22 @@
     });
   };
 
+  var renderRequiredPins = function (data, container, number) {
+    for (var i = 1; i <= number; i++) {
+      container.appendChild(createPin(data[i]));
+    }
+  };
+
+  var removePins = function () {
+    var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pinElements.forEach(function (it) {
+      it.remove();
+    });
+  };
+
   window.pin = {
-    renderPins: renderPins
+    renderPins: renderPins,
+    renderRequiredPins: renderRequiredPins,
+    removePins: removePins
   };
 })();

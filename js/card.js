@@ -2,7 +2,7 @@
 (function () {
   var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
-  var renderCards = function (card) {
+  var createCard = function (card) {
     var cardElement = similarCardTemplate.cloneNode(true);
     cardElement.querySelector('.popup__title').textContent = card.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
@@ -22,10 +22,33 @@
     return cardElement;
   };
 
-  var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderCards(window.testData.testObjects[0]));
+  var renderCard = function (data, container, index) {
+    container.appendChild(createCard(data[index]));
+  };
 
-  window.renderCard = {
-    fragmentCard: fragment
+  //   var removePins = function () {
+  //   var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+  //   pinElements.forEach(function (it) {
+  //     it.remove();
+  //   });
+  // };
+
+  var removeCard = function () {
+    var card = document.querySelector('.map__card');
+    card.remove();
+  };
+
+  // var renderCards = function (data, container) {
+  //   data.forEach(function (it) {
+  //     container.appendChild(createCard(it));
+  //   });
+  // };
+
+  // var fragment = document.createDocumentFragment();
+  // fragment.appendChild(renderCards(window.testData.testObjects[0]));
+
+  window.card = {
+    renderCard: renderCard,
+    removeCard: removeCard
   };
 })();

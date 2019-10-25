@@ -6,13 +6,22 @@
   var mapForm = document.querySelector('.map__filters');
   var adFields = adForm.querySelectorAll('fieldset');
   var address = adForm.querySelector('#address');
+  var success = document.querySelector('#success').content.querySelector('.success');
+  var error = document.querySelector('#error').content.querySelector('.error');
+  var main = document.querySelector('main');
+  var houseForm = document.querySelector('#housing-type');
+  var pins = [];
 
+  var ESC_KEYCODE = 27;
   var MAIN_PIN_WIDTH_DISABLED = 156;
   var MAIN_PIN_HEIGHT_DISABLED = 156;
   var MAIN_PIN_HEIGHT_ENABLED = 44;
   var MAIN_PIN_HEIGHT = 22;
 
   address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAIN_PIN_HEIGHT_DISABLED / 2);
+  var defaultAdress = address.value;
+  var defaultMainPinTop = mainPin.style.top;
+  var defaultMainPinLeft = mainPin.style.left;
 
   var getField = function (field) {
     for (var j = 0; j < field.length; j++) {
@@ -35,11 +44,6 @@
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
-    // window.renderApp();
-    // openMap();
-
-    // pinsMap.appendChild(window.renderPin.fragmentPin);
-    // pinsMap.appendChild(window.renderCard.fragmentCard);
 
     evt.preventDefault();
     var startCoords = {
@@ -95,8 +99,72 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  var openCard = function (data) {
+    var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    pinElements[0].addEventListener('click', function () {
+      window.card.renderCard(data, townMap, 0);
+      closeCard();
+    });
+
+    pinElements[1].addEventListener('click', function () {
+      window.card.renderCard(data, townMap, 1);
+      closeCard();
+    });
+
+    pinElements[2].addEventListener('click', function () {
+      window.card.renderCard(data, townMap, 2);
+      closeCard();
+    });
+
+    pinElements[3].addEventListener('click', function () {
+      window.card.renderCard(data, townMap, 3);
+      closeCard();
+    });
+
+    pinElements[4].addEventListener('click', function () {
+      window.card.renderCard(data, townMap, 4);
+      closeCard();
+    });
+  };
+
+  var closeCard = function () {
+    var closePopup = document.querySelector('.popup__close');
+    closePopup.addEventListener('click', function () {
+      window.card.removeCard();
+    });
+    var card = document.querySelector('.map__card');
+    card.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        window.card.removeCard();
+      }
+    });
+  };
+
+  var updatePins = function (type) {
+    window.pin.removePins();
+    var sameValues;
+    if (type.value === 'any') {
+      sameValues = pins;
+    } else {
+      sameValues = pins.filter(function (it) {
+        return it.offer.type === type.value;
+      });
+    }
+    window.pin.renderRequiredPins(sameValues, townMap, 5);
+  };
+
   var onSuccesHandler = function (data) {
-    window.pin.renderPins(data, townMap);
+    pins = data;
+
+    window.pin.renderRequiredPins(data, townMap, 5);
+
+    houseForm.addEventListener('change', function () {
+      updatePins(houseForm);
+      openCard(pins);
+    });
+
+    openCard(pins);
   };
 
   var startApp = function () {
@@ -105,5 +173,49 @@
     mainPin.removeEventListener('click', startApp);
   };
 
+  var onSuccess = function () {
+    main.appendChild(success);
+
+    main.addEventListener('click', function () {
+      main.removeChild(success);
+    });
+
+    main.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        main.removeChild(success);
+      }
+    });
+  };
+
+  var onError = function () {
+    main.appendChild(error);
+
+    main.addEventListener('click', function () {
+      main.removeChild(error);
+    });
+
+    main.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        main.removeChild(error);
+      }
+    });
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.save(new FormData(adForm), function () {
+      window.pin.removePins();
+      mainPin.style.top = defaultMainPinTop;
+      mainPin.style.left = defaultMainPinLeft;
+      adForm.reset();
+      address.value = defaultAdress;
+    });
+    evt.preventDefault();
+  });
+
   mainPin.addEventListener('click', startApp);
+
+  window.map = {
+    onSuccess: onSuccess,
+    onError: onError
+  };
 })();
