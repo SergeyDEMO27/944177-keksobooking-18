@@ -19,12 +19,6 @@
     });
   };
 
-  var renderRequiredPins = function (data, container, number) {
-    for (var i = 1; i <= number; i++) {
-      container.appendChild(createPin(data[i]));
-    }
-  };
-
   var removePins = function () {
     var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     pinElements.forEach(function (it) {
@@ -34,7 +28,6 @@
 
   window.pin = {
     renderPins: renderPins,
-    renderRequiredPins: renderRequiredPins,
     removePins: removePins
   };
 })();

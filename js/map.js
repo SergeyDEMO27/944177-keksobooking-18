@@ -9,8 +9,6 @@
   var success = document.querySelector('#success').content.querySelector('.success');
   var error = document.querySelector('#error').content.querySelector('.error');
   var main = document.querySelector('main');
-  var houseForm = document.querySelector('#housing-type');
-  var pins = [];
 
   var ESC_KEYCODE = 27;
   var MAIN_PIN_WIDTH_DISABLED = 156;
@@ -141,30 +139,11 @@
     });
   };
 
-  var updatePins = function (type) {
-    window.pin.removePins();
-    var sameValues;
-    if (type.value === 'any') {
-      sameValues = pins;
-    } else {
-      sameValues = pins.filter(function (it) {
-        return it.offer.type === type.value;
-      });
-    }
-    window.pin.renderRequiredPins(sameValues, townMap, 5);
-  };
-
   var onSuccesHandler = function (data) {
-    pins = data;
+    window.pins = data;
+    window.pin.renderPins(window.filter.allFilter(window.pins), townMap);
 
-    window.pin.renderRequiredPins(data, townMap, 5);
-
-    houseForm.addEventListener('change', function () {
-      updatePins(houseForm);
-      openCard(pins);
-    });
-
-    openCard(pins);
+    openCard(window.pins);
   };
 
   var startApp = function () {
