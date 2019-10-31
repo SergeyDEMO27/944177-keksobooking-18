@@ -97,53 +97,9 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  var openCard = function (data) {
-    var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    pinElements[0].addEventListener('click', function () {
-      window.card.renderCard(data, townMap, 0);
-      closeCard();
-    });
-
-    pinElements[1].addEventListener('click', function () {
-      window.card.renderCard(data, townMap, 1);
-      closeCard();
-    });
-
-    pinElements[2].addEventListener('click', function () {
-      window.card.renderCard(data, townMap, 2);
-      closeCard();
-    });
-
-    pinElements[3].addEventListener('click', function () {
-      window.card.renderCard(data, townMap, 3);
-      closeCard();
-    });
-
-    pinElements[4].addEventListener('click', function () {
-      window.card.renderCard(data, townMap, 4);
-      closeCard();
-    });
-  };
-
-  var closeCard = function () {
-    var closePopup = document.querySelector('.popup__close');
-    closePopup.addEventListener('click', function () {
-      window.card.removeCard();
-    });
-    var card = document.querySelector('.map__card');
-    card.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        window.card.removeCard();
-      }
-    });
-  };
-
   var onSuccesHandler = function (data) {
     window.pins = data;
     window.pin.renderPins(window.filter.allFilter(window.pins), townMap);
-
-    openCard(window.pins);
   };
 
   var startApp = function () {
@@ -152,30 +108,16 @@
     mainPin.removeEventListener('click', startApp);
   };
 
-  var onSuccess = function () {
-    main.appendChild(success);
+  var stateMessage = function (state) {
+    main.appendChild(state);
 
     main.addEventListener('click', function () {
-      main.removeChild(success);
+      main.removeChild(state);
     });
 
     main.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYCODE) {
-        main.removeChild(success);
-      }
-    });
-  };
-
-  var onError = function () {
-    main.appendChild(error);
-
-    main.addEventListener('click', function () {
-      main.removeChild(error);
-    });
-
-    main.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        main.removeChild(error);
+        main.removeChild(state);
       }
     });
   };
@@ -187,14 +129,13 @@
       mainPin.style.left = defaultMainPinLeft;
       adForm.reset();
       address.value = defaultAdress;
+      stateMessage(success);
+    }, function () {
+      stateMessage(error);
     });
     evt.preventDefault();
   });
 
   mainPin.addEventListener('click', startApp);
 
-  window.map = {
-    onSuccess: onSuccess,
-    onError: onError
-  };
 })();

@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var ESC_KEYCODE = 27;
 
   var createCard = function (card) {
     var cardElement = similarCardTemplate.cloneNode(true);
@@ -19,36 +20,22 @@
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
     cardElement.querySelector('.popup__photos').querySelector('img').src = card.offer.photos;
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
+    cardElement.querySelector('.popup__close').addEventListener('click', function () {
+      cardElement.remove();
+    });
+    cardElement.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        cardElement.remove();
+      }
+    });
     return cardElement;
   };
 
-  var renderCard = function (data, container, index) {
-    container.appendChild(createCard(data[index]));
+  var renderCard = function (data, container) {
+    container.appendChild(createCard(data));
   };
-
-  //   var removePins = function () {
-  //   var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-  //   pinElements.forEach(function (it) {
-  //     it.remove();
-  //   });
-  // };
-
-  var removeCard = function () {
-    var card = document.querySelector('.map__card');
-    card.remove();
-  };
-
-  // var renderCards = function (data, container) {
-  //   data.forEach(function (it) {
-  //     container.appendChild(createCard(it));
-  //   });
-  // };
-
-  // var fragment = document.createDocumentFragment();
-  // fragment.appendChild(renderCards(window.testData.testObjects[0]));
 
   window.card = {
-    renderCard: renderCard,
-    removeCard: removeCard
+    renderCard: renderCard
   };
 })();
