@@ -6,13 +6,20 @@
   var mapForm = document.querySelector('.map__filters');
   var adFields = adForm.querySelectorAll('fieldset');
   var address = adForm.querySelector('#address');
+  var success = document.querySelector('#success').content.querySelector('.success');
+  var error = document.querySelector('#error').content.querySelector('.error');
+  var main = document.querySelector('main');
 
+  var ESC_KEYCODE = 27;
   var MAIN_PIN_WIDTH_DISABLED = 156;
   var MAIN_PIN_HEIGHT_DISABLED = 156;
   var MAIN_PIN_HEIGHT_ENABLED = 44;
   var MAIN_PIN_HEIGHT = 22;
 
   address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAIN_PIN_HEIGHT_DISABLED / 2);
+  var defaultAdress = address.value;
+  var defaultMainPinTop = mainPin.style.top;
+  var defaultMainPinLeft = mainPin.style.left;
 
   var getField = function (field) {
     for (var j = 0; j < field.length; j++) {
@@ -35,11 +42,6 @@
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
-    // window.renderApp();
-    // openMap();
-
-    // pinsMap.appendChild(window.renderPin.fragmentPin);
-    // pinsMap.appendChild(window.renderCard.fragmentCard);
 
     evt.preventDefault();
     var startCoords = {
@@ -96,7 +98,8 @@
   });
 
   var onSuccesHandler = function (data) {
-    window.pin.renderPins(data, townMap);
+    window.pins = data;
+    window.pin.renderPins(window.filter.allFilter(window.pins), townMap);
   };
 
   var startApp = function () {
@@ -105,5 +108,34 @@
     mainPin.removeEventListener('click', startApp);
   };
 
+  var stateMessage = function (state) {
+    main.appendChild(state);
+
+    main.addEventListener('click', function () {
+      main.removeChild(state);
+    });
+
+    main.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        main.removeChild(state);
+      }
+    });
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.save(new FormData(adForm), function () {
+      window.pin.removePins();
+      mainPin.style.top = defaultMainPinTop;
+      mainPin.style.left = defaultMainPinLeft;
+      adForm.reset();
+      address.value = defaultAdress;
+      stateMessage(success);
+    }, function () {
+      stateMessage(error);
+    });
+    evt.preventDefault();
+  });
+
   mainPin.addEventListener('click', startApp);
+
 })();
