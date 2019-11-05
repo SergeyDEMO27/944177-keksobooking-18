@@ -7,6 +7,7 @@
   var type = document.querySelector('#type');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+
   var roomsValues = {
     1: [2],
     2: [1, 2],
@@ -46,14 +47,6 @@
       }
     }
   });
-
-  // timeIn.addEventListener('change', function () {
-  //   for (var i = 0; i < timeIn.length; i++) {
-  //   if (Object.keys(timeValues)[i] === timeIn.value) {
-  //     timeOut.value = Object.values(timeValues)[i];
-  //     }
-  //   }
-  // });
 
   var time = function (firstTime, secondTime) {
     firstTime.addEventListener('change', function () {
