@@ -5,8 +5,7 @@
   var housePrice = filtersForm.querySelector('#housing-price');
   var houseRooms = filtersForm.querySelector('#housing-rooms');
   var houseGuests = filtersForm.querySelector('#housing-guests');
-  var houseFeatures = filtersForm.querySelector('#housing-features');
-  var features = houseFeatures.querySelectorAll('input');
+  var houseFeatures = filtersForm.querySelector('#housing-features').querySelectorAll('input');
   var townMap = document.querySelector('.map');
 
   var priceType = {
@@ -18,22 +17,18 @@
   };
 
   var getHousingFeatures = function (element) {
-    features.forEach(function (el) {
-      if (el.checked) {
-        element.offer.features.forEach(function (it) {
-          if (el.value === it) {
-            return element.offer.features;
-          } else {
-            return true;
-          }
-        });
-      }
+    return Array.from(houseFeatures).filter(function (el) {
+      return el.checked;
+    }).map(function (el) {
+      return el.value;
+    }).every(function (feature) {
+      return element.offer.features.includes(feature);
     });
   };
 
-  var getHousingType = window.debounce(function (element) {
+  var getHousingType = function (element) {
     return houseType.value === 'any' ? true : element.offer.type === houseType.value;
-  });
+  };
 
   var getHousingRooms = function (element) {
     return houseRooms.value === 'any' ? true : element.offer.rooms === parseInt(houseRooms.value, 10);
@@ -62,9 +57,13 @@
     }).slice(0, 5);
   };
 
-  filtersForm.addEventListener('change', function () {
+  var filterChangeHandler = window.debounce(function () {
     window.pin.removePins();
     window.pin.renderPins(window.filter.allFilter(window.pins), townMap);
+  });
+
+  filtersForm.addEventListener('change', function () {
+    filterChangeHandler();
   });
 
   window.filter = {
