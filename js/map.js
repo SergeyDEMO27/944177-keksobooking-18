@@ -108,27 +108,45 @@
     mainPin.removeEventListener('click', startApp);
   };
 
+  var getDefaultForm = function () {
+    mainPin.style.top = defaultMainPinTop;
+    mainPin.style.left = defaultMainPinLeft;
+    adForm.reset();
+    address.value = defaultAdress;
+  };
+
+  var removeSuccess = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.removeChild(success);
+      main.removeEventListener('keydown', removeSuccess);
+    }
+  };
+
+  var removeError = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.removeChild(error);
+      main.removeEventListener('keydown', removeError);
+    }
+  };
+
   var stateMessage = function (state) {
     main.appendChild(state);
 
-    main.addEventListener('click', function () {
+    state.addEventListener('click', function () {
       main.removeChild(state);
     });
 
-    main.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        main.removeChild(state);
-      }
-    });
+    if (state === success) {
+      main.addEventListener('keydown', removeSuccess);
+    } else if (state === error) {
+      main.addEventListener('keydown', removeError);
+    }
   };
 
   adForm.addEventListener('submit', function (evt) {
     window.save(new FormData(adForm), function () {
       window.pin.removePins();
-      mainPin.style.top = defaultMainPinTop;
-      mainPin.style.left = defaultMainPinLeft;
-      adForm.reset();
-      address.value = defaultAdress;
+      getDefaultForm();
       stateMessage(success);
     }, function () {
       stateMessage(error);
