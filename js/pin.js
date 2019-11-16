@@ -1,36 +1,45 @@
 
 'use strict';
 (function () {
-  var similarPinTemplate = document.querySelector('#pin').content.querySelector('button');
-  var townMap = document.querySelector('.map');
+  var PIN_WIDTH = 40;
+  var PIN_HEIGHT = 40;
+
+  var similarPinElement = document.querySelector('#pin').content.querySelector('button');
 
   var createPin = function (pin) {
-    var pinElement = similarPinTemplate.cloneNode(true);
-    pinElement.style.left = (pin.location.x - 20) + 'px';
-    pinElement.style.top = (pin.location.y - 40) + 'px';
-    pinElement.querySelector('img').alt = pin.offer.title;
-    pinElement.querySelector('img').src = pin.author.avatar;
+    var pinElement = similarPinElement.cloneNode(true);
+    var pinElementsImg = pinElement.querySelector('img');
+    pinElement.style.left = (pin.location.x - PIN_WIDTH / 2) + 'px';
+    pinElement.style.top = (pin.location.y - PIN_HEIGHT) + 'px';
+    pinElementsImg.alt = pin.offer.title;
+    pinElementsImg.src = pin.author.avatar;
     pinElement.addEventListener('click', function () {
-      window.card.renderCard(pin, townMap);
+      if (document.querySelector('.map__card')) {
+        window.card.removeCard();
+      }
+      window.card.renderCard(pin, window.util.townMap);
     });
     return pinElement;
   };
 
-  var renderPins = function (data, container) {
-    data.forEach(function (it) {
-      container.appendChild(createPin(it));
+  var renderPinsElement = function (data, container) {
+    data.forEach(function (item) {
+      container.appendChild(createPin(item));
     });
+    for (var l = 0; l < window.util.mapForm.children.length; l++) {
+      window.util.mapForm.children[l].removeAttribute('disabled', 'disabled');
+    }
   };
 
-  var removePins = function () {
+  var removePinsElement = function () {
     var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    pinElements.forEach(function (it) {
-      it.remove();
+    pinElements.forEach(function (item) {
+      item.remove();
     });
   };
 
   window.pin = {
-    renderPins: renderPins,
-    removePins: removePins
+    renderPins: renderPinsElement,
+    removePins: removePinsElement
   };
 })();

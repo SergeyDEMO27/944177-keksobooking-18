@@ -1,5 +1,12 @@
 'use strict';
 (function () {
+  var TypePrices = {
+    BUNGALO: 0,
+    FLAT: 1000,
+    HOUSE: 5000,
+    PALACE: 10000
+  };
+
   var rooms = document.querySelector('#room_number');
   var guests = document.querySelector('#capacity');
   var guestsOptions = guests.querySelectorAll('option');
@@ -14,51 +21,50 @@
     3: [0, 1, 2],
     100: [3]
   };
-  var typePrices = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000
-  };
-  var timeValues = {
-    '12:00': '12:00',
-    '13:00': '13:00',
-    '14:00': '14:00'
-  };
 
-  rooms.addEventListener('change', function () {
+  var getGuestsCapacity = function () {
+    guestsOptions[2].selected = true;
     guestsOptions.forEach(function (element) {
       element.setAttribute('disabled', 'disabled');
     });
-    for (var j = 0; j < rooms.length; j++) {
-      if (Object.keys(roomsValues)[j] === rooms.value) {
-        Object.values(roomsValues)[j].forEach(function (element) {
+    Object.keys(roomsValues).forEach(function (item) {
+      if (item === rooms.value) {
+        roomsValues[item].forEach(function (element) {
           guestsOptions[element].removeAttribute('disabled', 'disabled');
         });
       }
-    }
+    });
+  };
+  getGuestsCapacity();
+
+  rooms.addEventListener('change', function () {
+    getGuestsCapacity();
   });
 
-  type.addEventListener('change', function () {
-    for (var i = 0; i < type.length; i++) {
-      if (Object.keys(typePrices)[i] === type.value) {
-        price.min = Object.values(typePrices)[i];
-        price.placeholder = Object.values(typePrices)[i];
-      }
-    }
-  });
-
-  var time = function (firstTime, secondTime) {
-    firstTime.addEventListener('change', function () {
-      for (var i = 0; i < firstTime.length; i++) {
-        if (Object.keys(timeValues)[i] === firstTime.value) {
-          secondTime.value = Object.values(timeValues)[i];
-        }
+  var getHousePrice = function () {
+    Object.keys(TypePrices).forEach(function (item) {
+      if (item === (type.value).toUpperCase()) {
+        price.min = TypePrices[item];
+        price.placeholder = TypePrices[item];
       }
     });
   };
+  getHousePrice();
 
-  time(timeIn, timeOut);
-  time(timeOut, timeIn);
+  type.addEventListener('change', function () {
+    getHousePrice();
+  });
 
+  var getTime = function (firstTime, secondTime) {
+    firstTime.addEventListener('change', function () {
+      secondTime.value = firstTime.value;
+    });
+  };
+  getTime(timeIn, timeOut);
+  getTime(timeOut, timeIn);
+
+  window.validation = {
+    getGuestsCapacity: getGuestsCapacity,
+    getHousePrice: getHousePrice
+  };
 })();
