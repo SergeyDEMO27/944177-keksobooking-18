@@ -12,6 +12,7 @@
   var MAIN_PIN_HEIGHT_ENABLED = 44;
   var MAIN_PIN_HEIGHT = 22;
   var MAIN_PIN_HIDING = 1.24;
+  var MAIN_PIN_HIDING_LEFT = 78;
 
   var mainPin = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
@@ -20,8 +21,7 @@
   var success = document.querySelector('#success').content.querySelector('.success');
   var error = document.querySelector('#error').content.querySelector('.error');
   var main = document.querySelector('main');
-  var filtersForm = document.querySelector('.map__filters');
-  var resetBtn = document.querySelector('.ad-form__reset');
+  var resetButton = document.querySelector('.ad-form__reset');
   var dragged = false;
   var startCoords = {
     x: 0,
@@ -88,8 +88,8 @@
     mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
     if (parseInt(mainPin.style.left, 10) > (mapWidth - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING)) {
       mainPin.style.left = (mapWidth - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING) + 'px';
-    } else if (parseInt(mainPin.style.left, 10) < (MapBordersLimit.LEFT - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING)) {
-      mainPin.style.left = (MapBordersLimit.LEFT - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING) + 'px';
+    } else if (parseInt(mainPin.style.left, 10) < (MapBordersLimit.LEFT - MAIN_PIN_HIDING_LEFT)) {
+      mainPin.style.left = (MapBordersLimit.LEFT - MAIN_PIN_HIDING_LEFT) + 'px';
     }
 
     address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
@@ -125,7 +125,7 @@
     mainPin.style.top = defaultMainPinTop;
     mainPin.style.left = defaultMainPinLeft;
     adForm.reset();
-    filtersForm.reset();
+    window.util.mapForm.reset();
     window.pin.removePins();
     address.value = defaultAdress;
     window.validation.getGuestsCapacity();
@@ -141,36 +141,36 @@
     mainPin.addEventListener('mousedown', onMainPinMousedown);
   };
 
-  resetBtn.addEventListener('click', function (evt) {
+  resetButton.addEventListener('click', function (evt) {
     getDefaultForm();
     evt.preventDefault();
   });
 
-  var onSuccessMsgClick = function () {
+  var onSuccessMessageClick = function () {
     main.removeChild(success);
-    document.removeEventListener('click', onSuccessMsgClick);
-    document.removeEventListener('keydown', onSuccessMsgKeydown);
+    document.removeEventListener('click', onSuccessMessageClick);
+    document.removeEventListener('keydown', onSuccessMessageKeydown);
   };
 
-  var onSuccessMsgKeydown = function (evt) {
+  var onSuccessMessageKeydown = function (evt) {
     if (evt.keyCode === window.util.ESC_KEYCODE) {
       main.removeChild(success);
-      document.removeEventListener('keydown', onSuccessMsgKeydown);
-      document.removeEventListener('click', onSuccessMsgClick);
+      document.removeEventListener('keydown', onSuccessMessageKeydown);
+      document.removeEventListener('click', onSuccessMessageClick);
     }
   };
 
-  var onErrorsMsgClick = function () {
+  var onErrorsMessageClick = function () {
     main.removeChild(error);
-    document.removeEventListener('click', onErrorsMsgClick);
-    document.removeEventListener('keydown', onErrorMsgKeydown);
+    document.removeEventListener('click', onErrorsMessageClick);
+    document.removeEventListener('keydown', onErrorMessageKeydown);
   };
 
-  var onErrorMsgKeydown = function (evt) {
+  var onErrorMessageKeydown = function (evt) {
     if (evt.keyCode === window.util.ESC_KEYCODE) {
       main.removeChild(error);
-      document.removeEventListener('keydown', onErrorMsgKeydown);
-      document.removeEventListener('click', onErrorsMsgClick);
+      document.removeEventListener('keydown', onErrorMessageKeydown);
+      document.removeEventListener('click', onErrorsMessageClick);
     }
   };
 
@@ -178,11 +178,11 @@
     main.appendChild(state);
 
     if (state === success) {
-      document.addEventListener('click', onSuccessMsgClick);
-      document.addEventListener('keydown', onSuccessMsgKeydown);
+      document.addEventListener('click', onSuccessMessageClick);
+      document.addEventListener('keydown', onSuccessMessageKeydown);
     } else if (state === error) {
-      document.addEventListener('click', onErrorsMsgClick);
-      document.addEventListener('keydown', onErrorMsgKeydown);
+      document.addEventListener('click', onErrorsMessageClick);
+      document.addEventListener('keydown', onErrorMessageKeydown);
     }
   };
 

@@ -8,12 +8,11 @@
     MAX: 50000
   };
 
-  var filtersForm = document.querySelector('.map__filters');
-  var houseType = filtersForm.querySelector('#housing-type');
-  var housePrice = filtersForm.querySelector('#housing-price');
-  var houseRooms = filtersForm.querySelector('#housing-rooms');
-  var houseGuests = filtersForm.querySelector('#housing-guests');
-  var houseFeatures = filtersForm.querySelector('#housing-features').querySelectorAll('input');
+  var houseType = window.util.mapForm.querySelector('#housing-type');
+  var housePrice = window.util.mapForm.querySelector('#housing-price');
+  var houseRooms = window.util.mapForm.querySelector('#housing-rooms');
+  var houseGuests = window.util.mapForm.querySelector('#housing-guests');
+  var houseFeatures = window.util.mapForm.querySelector('#housing-features').querySelectorAll('input');
 
   var getHousingFeatures = function (element) {
     return Array.from(houseFeatures).filter(function (item) {
@@ -62,7 +61,7 @@
     window.pin.renderPins(window.filter.getAllFilters(window.pins), window.util.townMap);
   });
 
-  filtersForm.addEventListener('change', function () {
+  window.util.mapForm.addEventListener('change', function () {
     filterUpdate();
   });
 

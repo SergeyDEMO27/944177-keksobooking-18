@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  var timeoutInterval = 10000; // ms
+  var TIMEOUT_INTERVAL = 10000; // ms
 
   var createXMLHttpRequest = function (address, method, onLoad, onError, data) {
     var URL = address;
@@ -21,7 +21,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = timeoutInterval;
+    xhr.timeout = TIMEOUT_INTERVAL;
 
     xhr.open(method, URL);
     xhr.send(data);

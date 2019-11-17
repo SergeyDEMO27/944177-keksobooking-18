@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  var CARD_IMG_WIDTH = 45;
-  var CARD_IMG_HEIGHT = 40;
+  var CARD_IMAGE_WIDTH = 45;
+  var CARD_IMAGE_HEIGHT = 40;
 
   var similarCardElement = document.querySelector('#card').content.querySelector('.map__card');
 
@@ -26,8 +26,8 @@
     card.offer.photos.forEach(function (item) {
       var photo = document.createElement('img');
       photo.className = 'popup__photo';
-      photo.setAttribute('width', CARD_IMG_WIDTH);
-      photo.setAttribute('height', CARD_IMG_HEIGHT);
+      photo.setAttribute('width', CARD_IMAGE_WIDTH);
+      photo.setAttribute('height', CARD_IMAGE_HEIGHT);
       photo.alt = 'Фотография жилья';
       photo.src = item;
       cardElementsPhotos.appendChild(photo);

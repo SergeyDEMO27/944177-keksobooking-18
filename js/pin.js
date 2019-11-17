@@ -8,11 +8,11 @@
 
   var createPin = function (pin) {
     var pinElement = similarPinElement.cloneNode(true);
-    var pinElementsImg = pinElement.querySelector('img');
+    var pinElementsImage = pinElement.querySelector('img');
     pinElement.style.left = (pin.location.x - PIN_WIDTH / 2) + 'px';
     pinElement.style.top = (pin.location.y - PIN_HEIGHT) + 'px';
-    pinElementsImg.alt = pin.offer.title;
-    pinElementsImg.src = pin.author.avatar;
+    pinElementsImage.alt = pin.offer.title;
+    pinElementsImage.src = pin.author.avatar;
     pinElement.addEventListener('click', function () {
       if (document.querySelector('.map__card')) {
         window.card.removeCard();
