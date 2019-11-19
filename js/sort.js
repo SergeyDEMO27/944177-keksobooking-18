@@ -12,12 +12,11 @@
   var housePrice = window.util.mapForm.querySelector('#housing-price');
   var houseRooms = window.util.mapForm.querySelector('#housing-rooms');
   var houseGuests = window.util.mapForm.querySelector('#housing-guests');
-  var houseFeatures = window.util.mapForm.querySelector('#housing-features').querySelectorAll('input');
+  var houseFeatures = window.util.mapForm.querySelector('#housing-features');
 
   var getHousingFeatures = function (element) {
-    return Array.from(houseFeatures).filter(function (item) {
-      return item.checked;
-    }).every(function (feature) {
+    var houseFeaturesOnChecked = houseFeatures.querySelectorAll('input:checked');
+    return Array.from(houseFeaturesOnChecked).every(function (feature) {
       return element.offer.features.includes(feature.value);
     });
   };
@@ -53,19 +52,19 @@
     }).slice(0, 5);
   };
 
-  var filterUpdate = window.debounce(function () {
+  var getFilterUpdate = window.debounce(function () {
     if (document.querySelector('.map__card')) {
-      window.card.removeCard();
+      window.advert.delete();
     }
-    window.pin.removePins();
-    window.pin.renderPins(window.filter.getAllFilters(window.pins), window.util.townMap);
+    window.marker.delete();
+    window.marker.render(window.sort.render(window.pins), window.util.townMap);
   });
 
   window.util.mapForm.addEventListener('change', function () {
-    filterUpdate();
+    getFilterUpdate();
   });
 
-  window.filter = {
-    getAllFilters: getAllFilters
+  window.sort = {
+    render: getAllFilters
   };
 })();

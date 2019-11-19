@@ -2,7 +2,7 @@
 'use strict';
 (function () {
   var PIN_WIDTH = 40;
-  var PIN_HEIGHT = 40;
+  var PIN_HEIGHT = 44;
 
   var similarPinElement = document.querySelector('#pin').content.querySelector('button');
 
@@ -15,31 +15,31 @@
     pinElementsImage.src = pin.author.avatar;
     pinElement.addEventListener('click', function () {
       if (document.querySelector('.map__card')) {
-        window.card.removeCard();
+        window.advert.delete();
       }
-      window.card.renderCard(pin, window.util.townMap);
+      window.advert.render(pin, window.util.townMap);
     });
     return pinElement;
   };
 
-  var renderPinsElement = function (data, container) {
+  var renderPin = function (data, container) {
     data.forEach(function (item) {
       container.appendChild(createPin(item));
     });
     for (var l = 0; l < window.util.mapForm.children.length; l++) {
-      window.util.mapForm.children[l].removeAttribute('disabled', 'disabled');
+      window.util.mapForm.children[l].removeAttribute('disabled');
     }
   };
 
-  var removePinsElement = function () {
+  var removePin = function () {
     var pinElements = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     pinElements.forEach(function (item) {
       item.remove();
     });
   };
 
-  window.pin = {
-    renderPins: renderPinsElement,
-    removePins: removePinsElement
+  window.marker = {
+    render: renderPin,
+    delete: removePin
   };
 })();

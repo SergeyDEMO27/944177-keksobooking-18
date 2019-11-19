@@ -25,12 +25,12 @@
   var getGuestsCapacity = function () {
     guestsOptions[2].selected = true;
     guestsOptions.forEach(function (element) {
-      element.setAttribute('disabled', 'disabled');
+      element.setAttribute('disabled', true);
     });
     Object.keys(roomsValues).forEach(function (item) {
       if (item === rooms.value) {
         roomsValues[item].forEach(function (element) {
-          guestsOptions[element].removeAttribute('disabled', 'disabled');
+          guestsOptions[element].removeAttribute('disabled');
         });
       }
     });

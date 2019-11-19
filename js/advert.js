@@ -3,6 +3,13 @@
   var CARD_IMAGE_WIDTH = 45;
   var CARD_IMAGE_HEIGHT = 40;
 
+  var HouseType = {
+    BUNGALO: 'Бунгало',
+    FLAT: 'Квартира',
+    HOUSE: 'Дом',
+    PALACE: 'Дворец'
+  };
+
   var similarCardElement = document.querySelector('#card').content.querySelector('.map__card');
 
   var createCard = function (card) {
@@ -12,7 +19,7 @@
     cardElement.querySelector('.popup__title').textContent = card.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = card.offer.price;
-    cardElement.querySelector('.popup__type').textContent = card.offer.type;
+    cardElement.querySelector('.popup__type').textContent = getHouseType(card.offer.type);
     cardElement.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
     cardElementsFeatures.innerHTML = '';
@@ -36,30 +43,41 @@
     cardElement.querySelector('.popup__close').addEventListener('click', function () {
       cardElement.remove();
     });
-    document.addEventListener('keydown', onCardsElementKeydown);
+    document.addEventListener('keydown', onCardsKeydown);
     return cardElement;
   };
 
-  var onCardsElementKeydown = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE) {
-      if (document.querySelector('.map__card')) {
-        removeCardsElement();
+  var getHouseType = function (types) {
+    var type;
+    Object.keys(HouseType).forEach(function (item) {
+      if (item === (types).toUpperCase()) {
+        return (type = HouseType[item]);
       }
-      document.removeEventListener('keydown', onCardsElementKeydown);
+      return type;
+    });
+    return type;
+  };
+
+  var onCardsKeydown = function (evt) {
+    if (window.util.isEscPressed(evt)) {
+      if (document.querySelector('.map__card')) {
+        removeCard();
+      }
+      document.removeEventListener('keydown', onCardsKeydown);
     }
   };
 
-  var renderCardsElement = function (data, container) {
+  var renderCard = function (data, container) {
     container.appendChild(createCard(data));
   };
 
-  var removeCardsElement = function () {
+  var removeCard = function () {
     var cardElement = document.querySelector('.map__card');
     cardElement.remove();
   };
 
-  window.card = {
-    renderCard: renderCardsElement,
-    removeCard: removeCardsElement
+  window.advert = {
+    render: renderCard,
+    delete: removeCard
   };
 })();

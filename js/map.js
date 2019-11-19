@@ -1,25 +1,22 @@
 'use strict';
 (function () {
-  var MapBordersLimit = {
-    TOP: 130,
-    BOTTOM: 630,
-    LEFT: 0
+  var PinSize = {
+    WIDTH: 40,
+    HEIGHT: 44
   };
-
-  var MAIN_PIN_WIDTH_DISABLED = 156;
-  var MAIN_PIN_HEIGHT_DISABLED = 156;
-  var MAIN_PIN_WIDTH_ENABLED = 40;
-  var MAIN_PIN_HEIGHT_ENABLED = 44;
-  var MAIN_PIN_HEIGHT = 22;
-  var MAIN_PIN_HIDING = 1.24;
-  var MAIN_PIN_HIDING_LEFT = 78;
+  var MapBordersLimit = {
+    TOP: 130 - PinSize.HEIGHT,
+    BOTTOM: 630 - PinSize.HEIGHT,
+    LEFT: 0 - (PinSize.WIDTH / 2),
+    RIGHT: window.util.townMap.offsetWidth - (PinSize.WIDTH / 2)
+  };
 
   var mainPin = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var adFields = adForm.querySelectorAll('fieldset');
   var address = adForm.querySelector('#address');
-  var success = document.querySelector('#success').content.querySelector('.success');
-  var error = document.querySelector('#error').content.querySelector('.error');
+  var success = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+  var error = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
   var main = document.querySelector('main');
   var resetButton = document.querySelector('.ad-form__reset');
   var dragged = false;
@@ -28,15 +25,21 @@
     y: 0
   };
 
-  address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + MAIN_PIN_HEIGHT_DISABLED / 2);
+  var setAdressCoordinate = function (x, y) {
+    var coordinateX = parseInt(x, 10) + parseInt(PinSize.WIDTH / 2, 10);
+    var coordinateY = parseInt(y, 10) + PinSize.HEIGHT;
+    address.value = coordinateX + ', ' + coordinateY;
+  };
+  setAdressCoordinate(mainPin.style.left, mainPin.style.top);
+
+  address.value = Math.floor((parseInt(mainPin.style.left, 10) + PinSize.WIDTH / 2)) + ', ' + Math.floor((parseInt(mainPin.style.top, 10) + PinSize.HEIGHT / 2));
   var inactiveAdress = address.value;
-  var defaultAdress = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
   var defaultMainPinTop = mainPin.style.top;
   var defaultMainPinLeft = mainPin.style.left;
 
   var getFields = function (fields) {
     fields.forEach(function (item) {
-      item.setAttribute('disabled', 'disabled');
+      item.setAttribute('disabled', true);
     });
   };
   getFields(adFields);
@@ -44,11 +47,11 @@
 
   var openMap = function () {
     adFields.forEach(function (item) {
-      item.removeAttribute('disabled', 'disabled');
+      item.removeAttribute('disabled');
     });
     window.util.townMap.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
-    address.value = defaultAdress;
+    setAdressCoordinate(mainPin.style.left, mainPin.style.top);
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
@@ -64,7 +67,6 @@
   });
 
   var onMouseMove = function (moveEvt) {
-    var mapWidth = window.util.townMap.offsetWidth;
     moveEvt.preventDefault();
     dragged = true;
 
@@ -79,20 +81,21 @@
     };
 
     mainPin.style.top = mainPin.offsetTop - shift.y + 'px';
-
-    if (parseInt(mainPin.style.top, 10) > MapBordersLimit.BOTTOM) {
-      mainPin.style.top = MapBordersLimit.BOTTOM + 'px';
-    } else if (parseInt(mainPin.style.top, 10) < MapBordersLimit.TOP) {
-      mainPin.style.top = MapBordersLimit.TOP + 'px';
-    }
     mainPin.style.left = mainPin.offsetLeft - shift.x + 'px';
-    if (parseInt(mainPin.style.left, 10) > (mapWidth - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING)) {
-      mainPin.style.left = (mapWidth - MAIN_PIN_WIDTH_ENABLED / MAIN_PIN_HIDING) + 'px';
-    } else if (parseInt(mainPin.style.left, 10) < (MapBordersLimit.LEFT - MAIN_PIN_HIDING_LEFT)) {
-      mainPin.style.left = (MapBordersLimit.LEFT - MAIN_PIN_HIDING_LEFT) + 'px';
-    }
+    setAdressCoordinate(mainPin.style.left, mainPin.style.top);
 
-    address.value = (parseInt(mainPin.style.left, 10) + MAIN_PIN_WIDTH_DISABLED / 2) + ', ' + (parseInt(mainPin.style.top, 10) + (MAIN_PIN_HEIGHT_DISABLED / 2) + (MAIN_PIN_HEIGHT_ENABLED / 2) + MAIN_PIN_HEIGHT);
+    var pinPositionTop = parseInt(mainPin.style.top, 10);
+    var pinPositionLeft = parseInt(mainPin.style.left, 10);
+
+    if (pinPositionTop > MapBordersLimit.BOTTOM) {
+      mainPin.style.top = MapBordersLimit.BOTTOM + 'px';
+    } else if (pinPositionTop < MapBordersLimit.TOP) {
+      mainPin.style.top = MapBordersLimit.TOP + 'px';
+    } if (pinPositionLeft > MapBordersLimit.RIGHT) {
+      mainPin.style.left = MapBordersLimit.RIGHT + 'px';
+    } else if (pinPositionLeft < MapBordersLimit.LEFT) {
+      mainPin.style.left = MapBordersLimit.LEFT + 'px';
+    }
   };
 
   var onMouseUp = function (upEvt) {
@@ -108,16 +111,18 @@
     }
   };
 
-  var onSuccesHandler = function (data) {
+  var onSuccessLoad = function (data) {
     window.pins = data;
-    window.pin.renderPins(window.filter.getAllFilters(window.pins), window.util.townMap);
+    window.marker.render(window.sort.render(window.pins), window.util.townMap);
+  };
+
+  var onError = function (message) {
+    renderErrorMessage(message);
   };
 
   var onMainPinMousedown = function () {
     openMap();
-    window.backend.load(onSuccesHandler, function () {
-      getStateMessage(error);
-    });
+    window.backend.load(onSuccessLoad, onError);
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
   };
 
@@ -126,12 +131,12 @@
     mainPin.style.left = defaultMainPinLeft;
     adForm.reset();
     window.util.mapForm.reset();
-    window.pin.removePins();
-    address.value = defaultAdress;
+    window.marker.delete();
+    address.value = inactiveAdress;
     window.validation.getGuestsCapacity();
     window.validation.getHousePrice();
     if (document.querySelector('.map__card')) {
-      window.card.removeCard();
+      window.advert.delete();
     }
     getFields(adFields);
     getFields(Array.from(window.util.mapForm.children));
@@ -148,51 +153,52 @@
 
   var onSuccessMessageClick = function () {
     main.removeChild(success);
+
     document.removeEventListener('click', onSuccessMessageClick);
     document.removeEventListener('keydown', onSuccessMessageKeydown);
   };
 
+  var onErrorMessageClick = function () {
+    main.removeChild(error);
+
+    document.removeEventListener('click', onErrorMessageClick);
+    document.removeEventListener('keydown', onErrorMessageKeydown);
+  };
+
   var onSuccessMessageKeydown = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE) {
+    if (window.util.isEscPressed(evt)) {
       main.removeChild(success);
       document.removeEventListener('keydown', onSuccessMessageKeydown);
       document.removeEventListener('click', onSuccessMessageClick);
     }
   };
 
-  var onErrorsMessageClick = function () {
-    main.removeChild(error);
-    document.removeEventListener('click', onErrorsMessageClick);
-    document.removeEventListener('keydown', onErrorMessageKeydown);
-  };
-
   var onErrorMessageKeydown = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE) {
+    if (window.util.isEscPressed(evt)) {
       main.removeChild(error);
       document.removeEventListener('keydown', onErrorMessageKeydown);
-      document.removeEventListener('click', onErrorsMessageClick);
+      document.removeEventListener('click', onErrorMessageClick);
     }
   };
 
-  var getStateMessage = function (state) {
-    main.appendChild(state);
+  var renderSuccessMessage = function () {
+    main.appendChild(success);
 
-    if (state === success) {
-      document.addEventListener('click', onSuccessMessageClick);
-      document.addEventListener('keydown', onSuccessMessageKeydown);
-    } else if (state === error) {
-      document.addEventListener('click', onErrorsMessageClick);
-      document.addEventListener('keydown', onErrorMessageKeydown);
-    }
+    success.addEventListener('click', onSuccessMessageClick);
+    document.addEventListener('keydown', onSuccessMessageKeydown);
+  };
+
+  var renderErrorMessage = function () {
+    main.appendChild(error);
+
+    error.addEventListener('click', onErrorMessageClick);
+    document.addEventListener('keydown', onErrorMessageKeydown);
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), function () {
-      getDefaultForm();
-      getStateMessage(success);
-    }, function () {
-      getStateMessage(error);
-    });
+    window.backend.save(new FormData(adForm), renderSuccessMessage, renderErrorMessage);
+    window.marker.delete();
+    getDefaultForm();
     evt.preventDefault();
   });
 
